@@ -15,4 +15,4 @@ var imageObj = bitmapToObject(options.src);
 imageObj.pixels = transform[options.transform](imageObj.pixels, options.transData);
 
 // Write new bitmap file from object
-objectToBitmap(options.dest);
+objectToBitmap(options.dest, imageObj);
