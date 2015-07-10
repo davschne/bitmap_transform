@@ -7,12 +7,11 @@ function scale(value, scale_factor, max) {
 // scale overall brightness
 
 exports.brightness = function(pixels, scale_factor, max) {
-  var newPixels;
+  var newPixels = [];
   for (var i = 0; i < pixels.length; i++) {
-    var pixel = pixels[i];
-    var newPixel = newPixels[i];
+    newPixels[i] = [];
     for (var ch = 0; ch < numColorChannels; ch++) {
-      newPixel[ch] = scale(pixel[ch], scale_factor, max);
+      newPixels[i][ch] = scale(pixels[i][ch], scale_factor, max);
     }
   }
   return newPixels;
@@ -22,12 +21,11 @@ exports.brightness = function(pixels, scale_factor, max) {
 
 exports.scaleRGB = function(pixels, config, max) {
   // config is an array: [R, G, B]
-  var newPixels;
+  var newPixels = [];
   for (var i = 0; i < pixels.length; i++) {
-    var pixel = pixels[i];
-    var newPixel = newPixels[i];
+    newPixels[i] = [];
     for (var ch = 0; ch < numColorChannels; ch++) {
-      newPixel[ch] = scale(pixel[ch], config[numColorChannels - 1 - ch], max);
+      newPixels[i][ch] = scale(pixels[i][ch], config[numColorChannels - 1 - ch], max);
     }
   }
   return newPixels;
