@@ -3,20 +3,16 @@ var bitmapToObject = require('./bitmapToObject');
 var objectToBitmap = require('./objectToBitmap');
 
 var parseArgs = function(args) {
-  // return {src: filename, dest: filename, transform: name, transData: obj}
+  // return {src: filename.bmp, dest: filename.bmp, transform: name, transData: obj}
 }
 
 var options = parseArgs(process.argv);
 
-var srcName = options.src;
-var destName = options.dest;
-var transformName = options.transform;
-
 // Create object from bitmap file
-var imageObj = bitmapToObject(srcName);
+var imageObj = bitmapToObject(options.src);
 
 // Transform pixel array
-imageObj.pixels = transform[transformName](imageObj.pixels, transData);
+imageObj.pixels = transform[options.transform](imageObj.pixels, options.transData);
 
 // Write new bitmap file from object
-objectToBitmap(imageObj);
+objectToBitmap(options.dest);
