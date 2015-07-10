@@ -22,7 +22,7 @@ module.exports = function (fileName, ee) {
 			pixelArray.push([data.readUInt8(pixelArrayBuffer[i]), data.readUInt8(pixelArrayBuffer[i+1]), data.readUInt8(pixelArrayBuffer[i+2])]);
 		}
 
-		imageSpecs.pixel = pixelArray;
+		imageSpecs.pixels = pixelArray;
 		ee.emit('objectCreated', imageSpecs);
 	});
 };
