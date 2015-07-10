@@ -1,0 +1,20 @@
+{
+  "name": "bitmap_tranform",
+  "version": "1.0.0",
+  "description": "Applies transforms to bitmap files",
+  "main": "transform.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "gulp": "^3.9.0",
+    "gulp-jscs": "^1.6.0",
+    "gulp-jshint": "^1.11.2",
+    "jscs": "^1.13.1",
+    "jshint": "^2.8.0",
+    "mocha": "^2.2.5"
+  }
+}
