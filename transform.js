@@ -16,15 +16,15 @@ exports.brightness = function(pixels, scale_factor, max) {
   return newPixels;
 };
 
-exports.scaleRGBA = function(pixels, Rscale, Gscale, Bscale, max) {
+exports.scaleRGB = function(pixels, Rscale, Gscale, Bscale, max) {
   var newPixels;
   for (var i = 0; i < pixels.length; i++) {
     var pixel = pixels[i];
     var newPixel = newPixels[i];
     // Scale red
-    newPixel[0] = scale(pixel[0], Rscale, max);
+    newPixel[0] = scale(pixel[0], Bscale, max);
     newPixel[1] = scale(pixel[1], Gscale, max);
-    newPixel[2] = scale(pixel[2], Bscale, max);
+    newPixel[2] = scale(pixel[2], Rscale, max);
   }
   return newPixels;
 };
