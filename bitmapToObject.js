@@ -13,7 +13,7 @@ module.exports = function (fileName, ee) {
 		imageSpecs.numColorInPalette = data.readUInt32LE(46);
 		imageSpecs.bufferSize = data.length;
 
-		imageSpecs.headerBuffer = Array.prototype.slice.call(data, (0,53));
+		imageSpecs.dataBuffer = data;
 
 		var pixelArrayBuffer = Array.prototype.slice.call(data, (data.readUInt32LE(10)));
 		var pixelArray = [];
