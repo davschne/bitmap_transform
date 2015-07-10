@@ -10,9 +10,7 @@ describe('transform', function() {
   });
   describe('.brightness', function() {
     it('should scale each pixel channel by a factor', function() {
-      var array1 = [[1, 2, 3], [4, 5, 6]];
       var scaleBy2 = [[2, 4, 6], [8, 10, 12]];
-      console.log(transform.brightness(array1, 2));
       expect(transform.brightness(array1, 2)).to.deep.equal(scaleBy2);
     });
   });
