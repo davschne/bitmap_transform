@@ -1,6 +1,8 @@
 var transform = require('./transform');
 var bitmapToObject = require('./bitmapToObject');
 var objectToBitmap = require('./objectToBitmap');
+var EventEmitter = require('events').EventEmitter;
+var ee = new EventEmitter();
 
 var parseArgs = function(args) {
   // return {src: filename.bmp, dest: filename.bmp, transform: name, transData: obj}
@@ -9,10 +11,16 @@ var parseArgs = function(args) {
 var options = parseArgs(process.argv);
 
 // Create object from bitmap file
-var imageObj = bitmapToObject(options.src);
+bitmapToObject(options.src, ee);
 
-// Transform pixel array
-imageObj.pixels = transform[options.transform](imageObj.pixels, options.transData);
+// when function finishes loading file, it will call:
+//   ee.emit('objectCreated', imageSpecs);
 
-// Write new bitmap file from object
-objectToBitmap(options.dest, imageObj);
+ee.on('objectCreated', function(err, imageObj) {
+
+  // Transform pixel array
+  imageObj.pixels = transform[options.transform](imageObj.pixels, options.transData);
+
+  // Write new bitmap file from object
+  objectToBitmap(options.dest, imageObj);
+});
