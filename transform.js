@@ -4,27 +4,56 @@ function scale(value, scale_factor, max) {
   return Math.min(value * scale_factor, max || 255);
 };
 
+// scale overall brightness
+
 exports.brightness = function(pixels, scale_factor, max) {
-  var newPixels;
+  var newPixels = [];
   for (var i = 0; i < pixels.length; i++) {
-    var pixel = pixels[i];
-    var newPixel = newPixels[i];
+    newPixels[i] = [];
     for (var ch = 0; ch < numColorChannels; ch++) {
-      newPixel[ch] = scale(pixel[ch], scale_factor, max);
+      newPixels[i][ch] = scale(pixels[i][ch], scale_factor, max);
     }
   }
   return newPixels;
 };
 
-exports.scaleRGB = function(pixels, Rscale, Gscale, Bscale, max) {
-  var newPixels;
+// scale R, G, B independently
+
+exports.scaleRGB = function(pixels, config, max) {
+  // config is an array: [R, G, B]
+  var newPixels = [];
   for (var i = 0; i < pixels.length; i++) {
-    var pixel = pixels[i];
-    var newPixel = newPixels[i];
-    // Scale red
-    newPixel[0] = scale(pixel[0], Bscale, max);
-    newPixel[1] = scale(pixel[1], Gscale, max);
-    newPixel[2] = scale(pixel[2], Rscale, max);
+    newPixels[i] = [];
+    for (var ch = 0; ch < numColorChannels; ch++) {
+      newPixels[i][ch] = scale(pixels[i][ch], config[numColorChannels - 1 - ch], max);
+    }
   }
   return newPixels;
 };
+
+// scale the data to grey values independently
+
+exports.scaleGrey = function(pixels) {
+  // config is an array: [R, G, B]
+  //var newPixels = [];
+  for ( var i = 0; i < pixels.length; i++) {
+    //console.log('(' + i + '): ' + pixArray[i][0] + ' : ' + pixArray[i][1] + ' : ' + pixArray[i][2]);
+    var blue = pixels[i][0];
+    var green = pixels[i][1];
+    var red = pixels[i][2];
+
+    var calGreyValue = Math.floor((blue + green + red)/ pixels[i].length);
+    //console.log(calGreyValue);
+
+    pixels[i][0] = calGreyValue;
+    pixels[i][1] = calGreyValue;
+    pixels[i][2] = calGreyValue;
+  }
+  return pixels;
+};
+
+// pass pixel array unchanged
+
+exports.identity = function(pixels) {
+  return pixels;
+}
