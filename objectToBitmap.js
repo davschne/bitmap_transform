@@ -33,7 +33,7 @@ exports = module.exports = function buildImage(filename, fileData){
       if(pixelCount > buffer.readUInt32LE(34) - 2){
         break;
       }
-      console.log('(' + pixelCount + '): ' + pixArray[i][j]);
+      //console.log('(' + pixelCount + '): ' + pixArray[i][j]);
       buffer.writeInt16LE(pixArray[i][j], + (pixelCount + startPixelLocation));
       pixelCount++;
     }
