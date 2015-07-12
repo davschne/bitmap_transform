@@ -34,23 +34,26 @@ exports.scaleRGB = function(image, options) {
   return image;
 };
 
-// scale the data to grey values independently
-exports.scaleGrey = function(image) {
-  // config is an array: [R, G, B]
-  for ( var i = 0; i < pixels.length; i++) {
+// grayscale rendering by averaging RGB values per pixel
+exports.grayscale = function(image) {
+  if (image.colorDepth !== 24) {
+    throw new Error("This transform only works for 24-bit color.");
+  }
+  var pixels = image.pixels;
+  for (var i = 0; i < pixels.length; i++) {
     //console.log('(' + i + '): ' + pixArray[i][0] + ' : ' + pixArray[i][1] + ' : ' + pixArray[i][2]);
     var blue = pixels[i][0];
     var green = pixels[i][1];
     var red = pixels[i][2];
 
-    var calGreyValue = Math.floor((blue + green + red)/ pixels[i].length);
-    //console.log(calGreyValue);
+    var avg = Math.round((blue + green + red)/ pixels[i].length);
+    //console.log(avg);
 
-    pixels[i][0] = calGreyValue;
-    pixels[i][1] = calGreyValue;
-    pixels[i][2] = calGreyValue;
+    pixels[i][0] = avg;
+    pixels[i][1] = avg;
+    pixels[i][2] = avg;
   }
-  return pixels;
+  return image;
 };
 
 // pass pixel array unchanged

@@ -21,6 +21,7 @@ describe('transform', function() {
       var scaleBy2 = [[2, 4, 6], [8, 10, 12]];
       expect(transform.brightness(image, [2]).pixels).to.deep.equal(scaleBy2);
     });
+    // 'should clip values greater than 255'
     // 'should throw an Error if colorDepth !== 24'
   });
 
@@ -32,6 +33,19 @@ describe('transform', function() {
     it('should scale RGB channels independently according to array of scaling factors', function() {
       var scale234 = [[1*4, 2*3, 3*2], [4*4, 5*3, 6*2]];
       expect(transform.scaleRGB(image, [2, 3, 4]).pixels).to.deep.equal(scale234);
+    });
+    // 'should clip values greater than 255'
+    // 'should throw an Error if colorDepth !== 24'
+  });
+
+  describe('.grayscale', function() {
+    var array1 = [[1, 2, 3], [4, 5, 6]];
+    var image = {};
+    image.pixels = array1;
+    image.colorDepth = 24;
+    it('should set all channels per pixel to the average of R, G, B values', function() {
+      var grayscale = [[2, 2, 2], [5, 5, 5]];
+      expect(transform.grayscale(image).pixels).to.deep.equal(grayscale);
     });
     // 'should throw an Error if colorDepth !== 24'
   });
