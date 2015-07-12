@@ -7,16 +7,15 @@ exports = module.exports = function(filename, image) {
   // var bufferSize = buffer.readUInt32LE(34)
   var pixels = image.pixels; //[2, 2, 44];
 
-  var pixelCount = 0;
-  for (var i = 0; i < pixels.length; i++ ) {
+  for (var i = 0; i < pixels.length; i++) {
     for (var j = 0; j < 3; j++) {
       //make sure not to go out of bounds - why 2 - I have now fn idea.
-      if(pixelCount > buffer.readUInt32LE(34) - 2){
+      /*if (pixelCount > buffer.readUInt32LE(34) - 2) {
         break;
       }
+      */
       //console.log('(' + pixelCount + '): ' + pixels[i][j]);
-      buffer.writeInt16LE(pixels[i][j], + (pixelCount + imageStart));
-      pixelCount++;
+      buffer.writeUInt8(pixels[i][j], imageStart + (i * 3) + j);
     }
   }
 
