@@ -61,17 +61,12 @@ module.exports = function (fileName, ee) {
 					byteCount++;
 				}
 				pixels.push(pixel);
+				console.log(pixel); // DEBUG
 			}
 			var bytesPadding = (4 - (byteCount % 4)) % 4;
 			offset += bytesPadding;
 			//console.log('Padding (line ', y, '): ', bytesPadding); // DEBUG
 		}
-
-		/*
-		for (var i = 0; i < pixelBuffer.length; i += 3) {
-			pixels.push([data.readUInt8(pixelBuffer[i]), data.readUInt8(pixelBuffer[i+1]), data.readUInt8(pixelBuffer[i+2])]);
-		}
-		*/
 
 		image.pixels = pixels;
 		ee.emit('objectCreated', image);
