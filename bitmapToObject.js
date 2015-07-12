@@ -1,29 +1,52 @@
-var fs = require('fs'),
-		buffer = require('buffer');
-		
+var fs = require('fs');
+
 module.exports = function (fileName, ee) {
+
 	fs.readFile(fileName, function(err, data) {
-		var imageSpecs = {};
-		imageSpecs.type = data.toString('ascii', 0, 2);
-		imageSpecs.size = data.readUInt32LE(2); 
-		imageSpecs.imageStart = data.readUInt32LE(10); 
-		imageSpecs.imageWidth = data.readUInt32LE(18); 
-		imageSpecs.imageHeight = data.readUInt32LE(22); 
-		imageSpecs.colorDepth = data.readUInt32LE(28); // 24 bits per pixel or 3 bytes (no alpha value?) RGB24
-		imageSpecs.numColorInPalette = data.readUInt32LE(46);
-		imageSpecs.bufferSize = data.length;
 
-		imageSpecs.dataBuffer = data;
+		var image = Object.create(null);
+		image.type = data.toString('ascii', 0, 2);
 
-		var pixelArrayBuffer = Array.prototype.slice.call(data, (data.readUInt32LE(10)));
-		var pixelArray = [];
+		if (image.type !== 'BM') {
+	    throw new Error("Can only accept bitmap files of type BM");
+	  }
 
-		for ( var i = 0; i < pixelArrayBuffer.length; i += 3 ) {
-			pixelArray.push([data.readUInt8(pixelArrayBuffer[i]), data.readUInt8(pixelArrayBuffer[i+1]), data.readUInt8(pixelArrayBuffer[i+2])]);
+		image.size = data.readUInt32LE(2);
+		image.imageStart = data.readUInt32LE(10);
+		image.DIBsize = data.readUInt32LE(14);
+
+		if (image.DIBsize === 12) {
+
+			// BITMAPCOREHEADER
+			image.imageWidth = data.readUInt32LE(18);
+			image.imageHeight = data.readUInt32LE(22);
+			image.colorDepth = data.readUInt32LE(28);
+			image.numColorInPalette = data.readUInt32LE(46);
+
+		} else if (image.DIBsize === 40) {
+
+			// BITMAPINFOHEADER
+			image.imageWidth = data.readUInt16LE(18);
+			image.imageHeight = data.readUInt16LE(20);
+			image.colorDepth = data.readUInt16LE(24);
+
+		} else {
+			throw new Error('Unexpected DIB header size: unrecognized encoding');
 		}
 
-		imageSpecs.pixels = pixelArray;
-		ee.emit('objectCreated', imageSpecs);
+		image.bufferSize = data.length;
+
+		image.dataBuffer = data;
+
+		var pixelBuffer = Array.prototype.slice.call(data, image.imageStart);
+		var pixels = [];
+
+		for (var i = 0; i < pixelBuffer.length; i += 3) {
+			pixels.push([data.readUInt8(pixelBuffer[i]), data.readUInt8(pixelBuffer[i+1]), data.readUInt8(pixelBuffer[i+2])]);
+		}
+
+		image.pixels = pixels;
+		ee.emit('objectCreated', image);
 	});
 };
 
