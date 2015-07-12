@@ -19,7 +19,7 @@ bitmapToObject(options.src, ee);
 ee.on('objectCreated', function(imageObj) {
 
   // Transform pixel array
-  imageObj.pixels = transform[options.transform](imageObj.pixels/*, options.transData*/);
+  imageObj = transform[options.transform](imageObj/*, options.transData*/);
 
   // Write new bitmap file from object
   objectToBitmap(options.dest, imageObj);
