@@ -1,9 +1,9 @@
 var fs = require('fs');
-//exports = module.exports = function(filename, dataObject) {
+
 exports = module.exports = function(filename, image) {
 
-  var buffer = image.dataBuffer; //dataObject.headerBuffer
-  var imageStart = buffer.readUInt32LE(10); //bufferLocation;
+  var buffer = image.dataBuffer;
+  var imageStart = buffer.readUInt32LE(10);
   // var bufferSize = buffer.readUInt32LE(34)
   var pixels = image.pixels; //[2, 2, 44];
 

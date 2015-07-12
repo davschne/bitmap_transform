@@ -15,7 +15,7 @@ module.exports = function (fileName, ee) {
 		image.imageStart = data.readUInt32LE(10);
 		image.DIBsize = data.readUInt32LE(14);
 
-		if (image.DIBsize === 12) {
+		if (image.DIBsize === 40) {
 
 			// BITMAPCOREHEADER
 			image.imageWidth = data.readUInt32LE(18);
@@ -23,7 +23,7 @@ module.exports = function (fileName, ee) {
 			image.colorDepth = data.readUInt32LE(28);
 			image.numColorInPalette = data.readUInt32LE(46);
 
-		} else if (image.DIBsize === 40) {
+		} else if (image.DIBsize === 12) {
 
 			// BITMAPINFOHEADER
 			image.imageWidth = data.readUInt16LE(18);
