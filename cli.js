@@ -5,7 +5,10 @@ var EventEmitter = require('events').EventEmitter;
 var ee = new EventEmitter();
 
 var parseArgs = function(args) {
-  return {src: args[2], dest: args[3], transform: [args[4]], /*transData: obj*/}
+  return {src: args[2],
+          dest: args[3],
+          transform: args[4],
+          transData: args.slice(5)};
 }
 
 var options = parseArgs(process.argv);
