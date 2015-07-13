@@ -1,14 +1,7 @@
-<<<<<<< HEAD
-var fs = require('fs'),
-		buffer = require('buffer');
-		
-module.exports = function (fileName, ee, callback) {
-=======
 var fs = require('fs');
 
 module.exports = function (fileName, ee) {
 
->>>>>>> 28f440b979e3fc999653feaad982ba3521732133
 	fs.readFile(fileName, function(err, data) {
 
 		var image = Object.create(null);
@@ -79,14 +72,8 @@ module.exports = function (fileName, ee) {
 			//console.log('Padding (line ', y, '): ', bytesPadding); // DEBUG
 		}
 
-<<<<<<< HEAD
-		imageSpecs.pixels = pixelArray;
-		ee.emit('objectCreated', imageSpecs);
-		callback();
-=======
 		image.pixels = pixels;
 		ee.emit('objectCreated', image);
->>>>>>> 28f440b979e3fc999653feaad982ba3521732133
 	});
 };
 
