@@ -40,7 +40,7 @@ exports = module.exports = function buildImage(filename, fileData){
   }
 
   //Will write new image byte data 
-  this.writeBmpFile = function(filename, buffer){
+ this.writeBmpFile = function(filename, buffer){
     console.log(filename)
     fs.writeFile(filename, buffer, 'binary', function(err){
       if (err) throw err

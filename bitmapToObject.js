@@ -1,7 +1,7 @@
 var fs = require('fs'),
 		buffer = require('buffer');
 		
-module.exports = function (fileName, ee) {
+module.exports = function (fileName, ee, callback) {
 	fs.readFile(fileName, function(err, data) {
 		var imageSpecs = {};
 		imageSpecs.type = data.toString('ascii', 0, 2);
@@ -24,6 +24,7 @@ module.exports = function (fileName, ee) {
 
 		imageSpecs.pixels = pixelArray;
 		ee.emit('objectCreated', imageSpecs);
+		callback();
 	});
 };
 
