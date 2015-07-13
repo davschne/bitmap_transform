@@ -60,4 +60,32 @@ exports.grayscale = function(image) {
 
 exports.identity = function(image) {
   return image;
-}
+};
+
+exports.rotateCCW = function(image) {
+  var pixels = image.pixels;
+  var newPixels = [];
+  var numColorChannels = 3;
+  var width = image.width;
+  var height = Math.abs(image.height);
+  for (var x = 0; x < width; x++) {
+    for (var y = height - 1; y >= 0; y--) {
+      var i = y * width + x;
+      var newPixel = [];
+      for (var ch = 0; ch < numColorChannels; ch++) {
+        newPixel.push(pixels[i][ch]);
+      }
+      newPixels.push(newPixel);
+    }
+  }
+  image.pixels = newPixels;
+  var saved = image.height;
+  if (saved > 0) {
+    image.height = image.width;
+    image.width = saved;
+  } else {
+    image.height = image.width * -1;
+    image.width = saved * -1;
+  }
+  return image;
+};
