@@ -11,21 +11,25 @@ module.exports = function (fileName, ee) {
 	    throw new Error("Can only accept bitmap files of type BM");
 	  }
 
-		image.size = data.readUInt32LE(2);
+		image.fileSize = data.readUInt32LE(2);
 		image.imageStart = data.readUInt32LE(10);
 		image.DIBsize = data.readUInt32LE(14);
 
 		if (image.DIBsize === 40) {
 
-			// BITMAPCOREHEADER
+			// BITMAPINFOHEADER
 			image.width = data.readInt32LE(18); // signed int
 			image.height = data.readInt32LE(22); // signed int
-			image.colorDepth = data.readUInt32LE(28);
+			image.colorDepth = data.readUInt16LE(28);
+			if (data.readUInt32LE(30) !== 0) {
+				throw new Error('Can only accept uncompressed bitmaps');
+			}
+			image.imageSize = data.readUInt32LE(34);
 			image.numColorInPalette = data.readUInt32LE(46);
 
 		} else if (image.DIBsize === 12) {
 
-			// BITMAPINFOHEADER
+			// BITMAPCOREHEADER
 			image.width = data.readUInt16LE(18);
 			image.height = data.readUInt16LE(20);
 			image.colorDepth = data.readUInt16LE(24);
@@ -42,7 +46,7 @@ module.exports = function (fileName, ee) {
 		var pixels = [];
 
 		//console.log('Pixels: ', image.width * image.height); // DEBUG
-		//console.log('File size: ', image.size); // DEBUG
+		//console.log('File size: ', image.fileSize); // DEBUG
 
 		var offset = image.imageStart;
 		// iterate rows
@@ -61,7 +65,7 @@ module.exports = function (fileName, ee) {
 					byteCount++;
 				}
 				pixels.push(pixel);
-				console.log(pixel); // DEBUG
+				// console.log(pixel); // DEBUG
 			}
 			var bytesPadding = (4 - (byteCount % 4)) % 4;
 			offset += bytesPadding;

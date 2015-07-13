@@ -1,11 +1,55 @@
 var fs = require('fs');
 
+var buildHeader = function(image) {
+
+  this.write(image.type, 0, 2, 'ascii'); // type
+  this.writeUInt32LE(image.fileSize, 2); // file size
+  this.writeUInt32LE(0, 6); // reserved values (not needed)
+  this.writeUInt32LE(image.imageStart, 10); // start of pixel data
+  this.writeUInt32LE(image.DIBsize, 14); // DIB header size
+
+  if (image.DIBsize === 40) {
+
+    // BITMAPINFOHEADER
+    this.writeInt32LE(image.width, 18); // signed int
+    this.writeInt32LE(image.height, 22); // signed int
+    this.writeUInt16LE(1, 26); // color planes : 1
+    this.writeUInt16LE(image.colorDepth, 28); // bits per pixel
+    this.writeUInt32LE(0, 30); // compression : none
+    this.writeUInt32LE(image.imageSize, 34); // image size incl padding
+    this.writeInt32LE(2835, 38); // h resolution, signed
+    this.writeInt32LE(2835, 42); // v resolution, signed
+    this.writeUInt32LE(image.numColorInPalette, 46); // colors in palette
+    this.writeUInt32LE(0, 50); // 0 : all colors important
+
+  } else if (image.DIBsize === 12) {
+
+    // BITMAPCOREHEADER
+    this.writeUInt16LE(image.width, 18);
+    this.writeUInt16LE(image.height, 20);
+    this.writeUInt16LE(1, 22);
+    this.writeUInt16LE(image.colorDepth, 24);
+
+  } else {
+    throw new Error('Unexpected DIB header size: unrecognized encoding');
+  }
+
+  return this;
+}
+
 exports = module.exports = function(filename, image) {
 
-  var buffer = image.dataBuffer;
-  // var imageStart = buffer.readUInt32LE(10);
-  // var bufferSize = buffer.readUInt32LE(34)
-  var pixels = image.pixels; //[2, 2, 44];
+  // var numPixels = Math.abs(image.width * image.height);
+  var channels = image.colorDepth / 8;
+  var bytesPerRow = image.width * channels;
+  var paddingPerRow = (4 - (bytesPerRow % 4)) % 4;
+  image.imageSize = Math.abs((bytesPerRow + paddingPerRow) * image.height);
+  image.fileSize = image.imageStart + image.imageSize;
+  console.log(image.fileSize);
+  var buffer = new Buffer(image.fileSize);
+  buffer = buildHeader.call(buffer, image);
+
+  var pixels = image.pixels;
 
   var offset = image.imageStart;
   var i = 0;
@@ -18,8 +62,8 @@ exports = module.exports = function(filename, image) {
       // iterate color channels
       for (var ch = 0; ch < 3; ch++) {
         buffer.writeUInt8(pixels[i][ch], offset);
-        console.log('offset: ', offset); // DEBUG
-        console.log('byteCount: ', byteCount); // DEBUG
+        // console.log('offset: ', offset); // DEBUG
+        // console.log('byteCount: ', byteCount); // DEBUG
         offset++;
         byteCount++;
       }
@@ -28,7 +72,7 @@ exports = module.exports = function(filename, image) {
     var bytesPadding = (4 - (byteCount % 4)) % 4;
     while (bytesPadding > 0) {
       buffer.writeUInt8(0, offset);
-      console.log('padding: ', offset); // DEBUG
+      // console.log('padding: ', offset); // DEBUG
       offset++;
       bytesPadding--;
     }
@@ -44,5 +88,4 @@ exports = module.exports = function(filename, image) {
   }
 
   writeBmpFile(filename, buffer);
-
 }
