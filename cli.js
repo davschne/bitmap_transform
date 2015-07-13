@@ -5,10 +5,14 @@ var EventEmitter = require('events').EventEmitter;
 var ee = new EventEmitter();
 
 var parseArgs = function(args) {
+  var options = Array.prototype.slice.call(args, 5, args.length);
+  for (var i = 0; i < options.length; i++) {
+    options[i] = Number(options[i]);
+  }
   return {src: args[2],
           dest: args[3],
           transform: args[4],
-          transData: args.slice(5)};
+          transData: options};
 }
 
 var options = parseArgs(process.argv);
@@ -22,7 +26,7 @@ bitmapToObject(options.src, ee);
 ee.on('objectCreated', function(imageObj) {
 
   // Transform pixel array
-  imageObj.pixels = transform[options.transform](imageObj.pixels/*, options.transData*/);
+  imageObj = transform[options.transform](imageObj, options.transData);
 
   // Write new bitmap file from object
   objectToBitmap(options.dest, imageObj);
