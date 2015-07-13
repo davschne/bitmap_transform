@@ -40,18 +40,20 @@ var buildHeader = function(image) {
 exports = module.exports = function(filename, image) {
 
   // var numPixels = Math.abs(image.width * image.height);
-  var channels = image.colorDepth / 8;
+  console.log(image.pixels[1], image.pixels[image.pixels.length - 1])
+  var channels = 3;//image.colorDepth / 8;
   var bytesPerRow = image.width * channels;
   var paddingPerRow = (4 - (bytesPerRow % 4)) % 4;
   image.imageSize = Math.abs((bytesPerRow + paddingPerRow) * image.height);
-  image.fileSize = image.imageStart + image.imageSize;
-  console.log(image.fileSize);
+  image.fileSize = 54 /*image.imageStart*/ + image.imageSize;
   var buffer = new Buffer(image.fileSize);
   buffer = buildHeader.call(buffer, image);
 
   var pixels = image.pixels;
 
-  var offset = image.imageStart;
+  var offset = 54; //image.imageStart;
+
+
   var i = 0;
   // iterate rows
   for (var y = 0; y < Math.abs(image.height); y++) {

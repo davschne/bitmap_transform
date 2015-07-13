@@ -4,17 +4,14 @@ var buildArrayFromPalette = function(image, data) {
 	var pixels = [];
 	var offset = image.imageStart;
 	var dataLength = image.fileSize - offset;
-	console.log('dataLength: ', dataLength);
 	var tableOffset = 54;
-	console.log(image.fileSize);
 
 	for (var i = 0; i < dataLength; i++) {
-		//console.log(offset + tableOffset);
-		var pointer = data.readUInt8(offset + tableOffset);
-		//console.log('pointer: ', pointer);
+		var pointer = data.readUInt8(offset) + tableOffset;
 		var palettePixel = [data.readUInt8(pointer),
 								 				data.readUInt8(pointer + 1),
 								 				data.readUInt8(pointer + 2)];
+
 		var pixel = [];
 		for (var ch = 0; ch < 3; ch++) {
 			pixel.push(palettePixel[ch]);
@@ -22,6 +19,7 @@ var buildArrayFromPalette = function(image, data) {
 		pixels.push(pixel);
 		offset += 1; // ASSUMING 8bit pointers
 	}
+
 	image.pixels = pixels;
 	return image;
 };
@@ -96,7 +94,7 @@ module.exports = function (fileName, ee) {
 			image = buildArrayNonPalette(image, data);
 		}
 
-		//console.log(image.pixels);
+		console.log("pixels length: ", image.pixels.length);
 
 		ee.emit('objectCreated', image);
 	});
