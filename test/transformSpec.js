@@ -12,14 +12,14 @@ describe('transform', function() {
     });
   });
 
-  describe('.brightness', function() {
+  describe('.scale', function() {
     var array1 = [[1, 2, 3], [4, 5, 6]];
     var image = {};
     image.pixels = array1;
     image.colorDepth = 24;
     it('should scale each pixel channel by a factor', function() {
       var scaleBy2 = [[2, 4, 6], [8, 10, 12]];
-      expect(transform.brightness(image, [2]).pixels).to.deep.equal(scaleBy2);
+      expect(transform.scale(image, [2]).pixels).to.deep.equal(scaleBy2);
     });
     // 'should clip values greater than 255'
     // 'should throw an Error if colorDepth !== 24'
