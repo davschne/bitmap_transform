@@ -1,53 +1,96 @@
 var fs = require('fs');
-//exports = module.exports = function buildImage(filename, dataObject){
-exports = module.exports = function buildImage(filename, fileData){
 
-  var buffer = fileData.dataBuffer; //dataObject.headerBuffer
-  var startPixelLocation = buffer.readUInt32LE(10); //bufferLocation;
-  var bufferSize = buffer.readUInt32LE(34)
-  var pixArray = fileData.pixels; //[2, 2, 44];
+var buildHeader = function(image) {
 
-  /*
-  console.log("Image Type: " + buffer.toString('ascii', 0, 2)); // file type
-  console.log("File Size: " + buffer.readUInt32LE(2)); // file size
-  console.log("Image Data Offset: " + buffer.readUInt32LE(10)); // image data offset
-  console.log("Image Type: " + buffer.readUInt32LE(46)); // num colors in palette.
-  console.log("Image Height: " + buffer.readUInt32LE(18)); // image height.
-  console.log("Image Width: " + buffer.readUInt32LE(22)); // image width
-  console.log("Image Depth: " + buffer.readUInt32LE(28)); // color depth.
-  console.log("Total Image Bytes: " + buffer.readUInt32LE(34));
-  console.log("start: " + startPixelLocation + " size: " + buffer.readUInt32LE(2));
-  */
-  //interate through pixelArray and assign values to pixels
-  //for ( var i = startPixelLocation; i < buffer.readUInt32LE(2) - 4; i += 3 ) {
-    //console.log('(' + i + '): ' + pixArray[i][0] + ' : ' + pixArray[i][1] + ' : ' + pixArray[i][2]);
-    //buffer.writeInt16LE(pixArray[i][0], i);
-    //buffer.writeInt16LE(pixArray[i][1], i + 1);
-    //buffer.writeInt16LE(pixArray[i][2], i + 2);
-  //}
+  this.write(image.type, 0, 2, 'ascii'); // type
+  this.writeUInt32LE(image.fileSize, 2); // file size
+  this.writeUInt32LE(0, 6); // reserved values (not needed)
+  this.writeUInt32LE(image.imageStart, 10); // start of pixel data
+  this.writeUInt32LE(image.DIBsize, 14); // DIB header size
 
-  var pixelCount = 0;
-  for (var i = 0; i < pixArray.length; i++ ) {
-    for(var j = 0; j < 3; j++){
-      //make sure not to go out of bounds - why 2 - I have now fn idea.
-      if(pixelCount > buffer.readUInt32LE(34) - 2){
-        break;
+  if (image.DIBsize === 40) {
+
+    // BITMAPINFOHEADER
+    this.writeInt32LE(image.width, 18); // signed int
+    this.writeInt32LE(image.height, 22); // signed int
+    this.writeUInt16LE(1, 26); // color planes : 1
+    this.writeUInt16LE(image.colorDepth, 28); // bits per pixel
+    this.writeUInt32LE(0, 30); // compression : none
+    this.writeUInt32LE(image.imageSize, 34); // image size incl padding
+    this.writeInt32LE(2835, 38); // h resolution, signed
+    this.writeInt32LE(2835, 42); // v resolution, signed
+    this.writeUInt32LE(image.numColorInPalette, 46); // colors in palette
+    this.writeUInt32LE(0, 50); // 0 : all colors important
+
+  } else if (image.DIBsize === 12) {
+
+    // BITMAPCOREHEADER
+    this.writeUInt16LE(image.width, 18);
+    this.writeUInt16LE(image.height, 20);
+    this.writeUInt16LE(1, 22);
+    this.writeUInt16LE(image.colorDepth, 24);
+
+  } else {
+    throw new Error('Unexpected DIB header size: unrecognized encoding');
+  }
+
+  return this;
+}
+
+exports = module.exports = function(filename, image) {
+
+  // var numPixels = Math.abs(image.width * image.height);
+  var channels = image.colorDepth / 8;
+  var bytesPerRow = image.width * channels;
+  var paddingPerRow = (4 - (bytesPerRow % 4)) % 4;
+  image.imageSize = Math.abs((bytesPerRow + paddingPerRow) * image.height);
+  image.fileSize = image.imageStart + image.imageSize;
+  console.log(image.fileSize);
+  var buffer = new Buffer(image.fileSize);
+  buffer = buildHeader.call(buffer, image);
+
+  var pixels = image.pixels;
+
+  var offset = image.imageStart;
+  var i = 0;
+  // iterate rows
+  for (var y = 0; y < Math.abs(image.height); y++) {
+    var byteCount = 0;
+    // iterate columns
+    for (var x = 0; x < image.width; x++) {
+      // var i = (y * image.width) + x;
+      // iterate color channels
+      for (var ch = 0; ch < 3; ch++) {
+        buffer.writeUInt8(pixels[i][ch], offset);
+        // console.log('offset: ', offset); // DEBUG
+        // console.log('byteCount: ', byteCount); // DEBUG
+        offset++;
+        byteCount++;
       }
-      //console.log('(' + pixelCount + '): ' + pixArray[i][j]);
-      buffer.writeInt16LE(pixArray[i][j], + (pixelCount + startPixelLocation));
-      pixelCount++;
+      i++;
+    }
+    var bytesPadding = (4 - (byteCount % 4)) % 4;
+    while (bytesPadding > 0) {
+      buffer.writeUInt8(0, offset);
+      // console.log('padding: ', offset); // DEBUG
+      offset++;
+      bytesPadding--;
     }
   }
 
+<<<<<<< HEAD
   //Will write new image byte data 
  this.writeBmpFile = function(filename, buffer){
+=======
+  //Will write new image byte data
+  this.writeBmpFile = function(filename, buffer) {
+>>>>>>> 28f440b979e3fc999653feaad982ba3521732133
     console.log(filename)
-    fs.writeFile(filename, buffer, 'binary', function(err){
+    fs.writeFile(filename, buffer, 'binary', function(err) {
       if (err) throw err
       console.log('File saved.')
     });
   }
 
   writeBmpFile(filename, buffer);
-
 }

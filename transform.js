@@ -1,60 +1,63 @@
-var numColorChannels = 3;
-
 function scale(value, scale_factor, max) {
   return Math.min(value * scale_factor, max || 255);
 };
 
 // scale overall brightness
-//exports.brightness = function(pixels, scale_factor, max) {
-exports.brightness = function(pixels) {
-  var newPixels = [];
+exports.brightness = function(image, options) {
+  if (image.colorDepth !== 24) {
+    throw new Error("This transform only works for 24-bit color.");
+  }
+  var numColorChannels = 3;
+  var pixels = image.pixels;
+  var scale_factor = options[0];
   for (var i = 0; i < pixels.length; i++) {
-    newPixels[i] = [];
     for (var ch = 0; ch < numColorChannels; ch++) {
-      newPixels[i][ch] = Math.floor(scale(pixels[i][ch], 0.3, 200));
+      pixels[i][ch] = Math.round(scale(pixels[i][ch], scale_factor, 255));
     }
   }
-  console.log(newPixels);
-  return newPixels;
+  return image;
 };
 
 // scale R, G, B independently
-//exports.scaleRGB = function(pixels, config, max) {
-exports.scaleRGB = function(pixels) {
-  // config is an array: [R, G, B]
-  var config = [128, 128, 128];
-  var max = 50;
-  var newPixels = [];
+exports.scaleRGB = function(image, options) {
+  // options is an array: [R, G, B]
+  if (image.colorDepth !== 24) {
+    throw new Error("This transform only works for 24-bit color.");
+  }
+  var numColorChannels = 3;
+  var pixels = image.pixels;
   for (var i = 0; i < pixels.length; i++) {
-    newPixels[i] = [];
     for (var ch = 0; ch < numColorChannels; ch++) {
-      newPixels[i][ch] = Math.floor(scale(pixels[i][ch], config[numColorChannels - 1 - ch], max));
+      pixels[i][ch] = Math.round(scale(pixels[i][ch], options[numColorChannels - 1 - ch], 255));
     }
   }
-  return newPixels;
+  return image;
 };
 
-// scale the data to grey values independently
-exports.scaleGrey = function(pixels) {
-  // config is an array: [R, G, B]
-  for ( var i = 0; i < pixels.length; i++) {
+// grayscale rendering by averaging RGB values per pixel
+exports.grayscale = function(image) {
+  if (image.colorDepth !== 24) {
+    throw new Error("This transform only works for 24-bit color.");
+  }
+  var pixels = image.pixels;
+  for (var i = 0; i < pixels.length; i++) {
     //console.log('(' + i + '): ' + pixArray[i][0] + ' : ' + pixArray[i][1] + ' : ' + pixArray[i][2]);
     var blue = pixels[i][0];
     var green = pixels[i][1];
     var red = pixels[i][2];
 
-    var calGreyValue = Math.floor((blue + green + red)/ pixels[i].length);
-    //console.log(calGreyValue);
+    var avg = Math.round((blue + green + red)/ pixels[i].length);
+    //console.log(avg);
 
-    pixels[i][0] = calGreyValue;
-    pixels[i][1] = calGreyValue;
-    pixels[i][2] = calGreyValue;
+    pixels[i][0] = avg;
+    pixels[i][1] = avg;
+    pixels[i][2] = avg;
   }
-  return pixels;
+  return image;
 };
 
 // pass pixel array unchanged
 
-exports.identity = function(pixels) {
-  return pixels;
+exports.identity = function(image) {
+  return image;
 }
