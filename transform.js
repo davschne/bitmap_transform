@@ -1,6 +1,6 @@
 function scale(value, scale_factor, max) {
   return Math.min(value * scale_factor, max || 255);
-};
+}
 
 // scale overall brightness
 exports.scale = function(image, options) {

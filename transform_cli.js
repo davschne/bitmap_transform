@@ -13,7 +13,7 @@ var parseArgs = function(args) {
           dest: args[3],
           transform: args[4],
           transData: options};
-}
+};
 
 var options = parseArgs(process.argv);
 
