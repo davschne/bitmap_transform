@@ -3,7 +3,7 @@ function scale(value, scale_factor, max) {
 };
 
 // scale overall brightness
-exports.brightness = function(image, options) {
+exports.scale = function(image, options) {
   if (image.colorDepth !== 24) {
     throw new Error("This transform only works for 24-bit color.");
   }
