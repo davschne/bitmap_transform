@@ -78,13 +78,8 @@ exports = module.exports = function(filename, image) {
     }
   }
 
-<<<<<<< HEAD
   //Will write new image byte data 
  this.writeBmpFile = function(filename, buffer){
-=======
-  //Will write new image byte data
-  this.writeBmpFile = function(filename, buffer) {
->>>>>>> 28f440b979e3fc999653feaad982ba3521732133
     console.log(filename)
     fs.writeFile(filename, buffer, 'binary', function(err) {
       if (err) throw err
