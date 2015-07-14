@@ -7,27 +7,27 @@ var buildImage = require('../objectToBitmap.js'),
 		ee = new EE();
 
 describe('all test', function() {
-	
+
 	describe('bitmapToObject', function() {
 		it('will read the bmp file, convert to an object and emit an event', function() {
-			readImage('./non-palette-bitmap.bmp', ee);
+			readImage('./test/non-palette-bitmap.bmp', ee);
 			ee.on('objectCreated', function(data) {
-					expect(data.type).equal('BM');	
+					expect(data.type).equal('BM');
 				});
 			});
 		});
-	
+
 	describe('objectToBitmap', function() {
 		it('will write a js object back to the bmp file', function() {
 			before(function() {
-				readImage('./non-palette-bitmap.bmp', ee);
+				readImage('./test/non-palette-bitmap.bmp', ee);
 				ee.on('objectCreated', function(imageSpecs) {
 					buildImage(dest, imageSpecs);
 					done();
 				});
 			})
 			fs.readFile('./testimg.bmp', function (err, data) {
-				expect(err).to.be(null);	
+				expect(err).to.be(null);
 			});
 		});
 	});
