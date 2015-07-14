@@ -78,11 +78,6 @@ exports = module.exports = function(filename, image) {
     }
   }
 
-<<<<<<< HEAD
-  //Will write new image byte data 
- this.writeBmpFile = function(filename, buffer){
-    console.log(filename)
-=======
   //Will write new image byte data
   this.writeBmpFile = function(filename, buffer) {
     console.log(filename);
