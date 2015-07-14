@@ -81,7 +81,6 @@ exports = module.exports = function(filename, image) {
   //Will write new image byte data
   this.writeBmpFile = function(filename, buffer) {
     console.log(filename);
->>>>>>> master
     fs.writeFile(filename, buffer, 'binary', function(err) {
       if (err) throw err;
       console.log('File saved.');
