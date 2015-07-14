@@ -6,12 +6,18 @@ The main program, transform_cli.js, reads a bitmap file, transforms it in some w
  (4+) any additional arguments the specific transform needs to do its work (see below)
 
 The transforms are:
+
  - identity  : passes the image unchanged
+
  - grayscale : replaces RGB values for each pixel with their average
+
  - scale     : scales each color channel by a value
                (1 arg: scaling factor)
+
  - scaleRGB  : scales RGB values independently
                (3 args: scaleR, scaleG, scaleB)
+
+ - rotateCCW : rotates the image 90 degrees counter-clockwise
 
 Examples:
 
