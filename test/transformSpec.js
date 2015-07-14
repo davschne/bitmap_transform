@@ -12,14 +12,14 @@ describe('transform', function() {
     });
   });
 
-  describe('.brightness', function() {
+  describe('.scale', function() {
     var array1 = [[1, 2, 3], [4, 5, 6]];
     var image = {};
     image.pixels = array1;
     image.colorDepth = 24;
     it('should scale each pixel channel by a factor', function() {
       var scaleBy2 = [[2, 4, 6], [8, 10, 12]];
-      expect(transform.brightness(image, [2]).pixels).to.deep.equal(scaleBy2);
+      expect(transform.scale(image, [2]).pixels).to.deep.equal(scaleBy2);
     });
     // 'should clip values greater than 255'
     // 'should throw an Error if colorDepth !== 24'
@@ -44,9 +44,30 @@ describe('transform', function() {
     image.pixels = array1;
     image.colorDepth = 24;
     it('should set all channels per pixel to the average of R, G, B values', function() {
-      var grayscale = [[2, 2, 2], [5, 5, 5]];
-      expect(transform.grayscale(image).pixels).to.deep.equal(grayscale);
+      var grayscaled = [[2, 2, 2], [5, 5, 5]];
+      expect(transform.grayscale(image).pixels).to.deep.equal(grayscaled);
     });
     // 'should throw an Error if colorDepth !== 24'
+  });
+
+  describe('.rotateCCW', function() {
+    var array1 = [[1,  2,  3],  [4,  5,  6],
+                  [7,  8,  9],  [10, 11, 12],
+                  [13, 14, 15], [16, 17, 18]];
+    var image = {};
+    image.pixels = array1;
+    image.width = 2;
+    image.height = 3;
+    image.colorDepth = 24;
+    var rotatedCCW = [[13, 14, 15], [7,  8,  9],  [1, 2, 3],
+                     [16, 17, 18], [10, 11, 12], [4, 5, 6]];
+    var rotatedImage = transform.rotateCCW(image);
+    it('should rotate the pixel array clockwise 90 degrees', function() {
+      expect(rotatedImage.pixels).to.deep.equal(rotatedCCW);
+    });
+    it('should switch image.width and image.height properties', function() {
+      expect(rotatedImage.width).to.equal(3);
+      expect(rotatedImage.height).to.equal(2);
+    });
   });
 });

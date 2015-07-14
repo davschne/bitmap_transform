@@ -35,7 +35,7 @@ var buildHeader = function(image) {
   }
 
   return this;
-}
+};
 
 exports = module.exports = function(filename, image) {
 
@@ -78,14 +78,20 @@ exports = module.exports = function(filename, image) {
     }
   }
 
+<<<<<<< HEAD
   //Will write new image byte data 
  this.writeBmpFile = function(filename, buffer){
     console.log(filename)
+=======
+  //Will write new image byte data
+  this.writeBmpFile = function(filename, buffer) {
+    console.log(filename);
+>>>>>>> master
     fs.writeFile(filename, buffer, 'binary', function(err) {
-      if (err) throw err
-      console.log('File saved.')
+      if (err) throw err;
+      console.log('File saved.');
     });
-  }
+  };
 
   writeBmpFile(filename, buffer);
-}
+};
