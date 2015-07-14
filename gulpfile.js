@@ -4,15 +4,15 @@ var gulp = require('gulp'),
 
 gulp.task('test', function() {
 	return gulp
-	.src('test/*.js')
-	.pipe(mocha({reporter: 'Spec'}));
+	 .src('test/*.js')
+	 .pipe(mocha({reporter: 'Spec'}));
 });
 
 gulp.task('lint', function() {
 	return gulp
-	.src('*.js')
-	.pipe(jshint())
-  .pipe(jshint.reporter('default'));
+	 .src('*.js')
+	 .pipe(jshint())
+   .pipe(jshint.reporter('default'));
 });
 
 //gulp.task('watch:test_lint', function() {
